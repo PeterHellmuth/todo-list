@@ -22,6 +22,21 @@ generateDOM();
 function generateDOM(){
     generateCategories(currentProject, categoriesDiv).addEventListener("click", addCategory);
     generateTodoItems(currentProject, todoItemsDiv).forEach((todoButton) => todoButton.addEventListener("click", addTodo));
+    let categoryHeaders = document.querySelectorAll(".category-header");
+    categoryHeaders.forEach((header) => header.addEventListener("click", categoryClicked));
+}
+
+function categoryClicked(event){
+    
+    let submitButton = generateCategoryDialog(bodyElem, event.target.innerText);
+    submitButton.addEventListener("click", categorySubmitted);
+    let deleteButton = document.getElementById("delete-button");
+    if(deleteButton){
+        deleteButton.addEventListener("click", categoryDeleted);
+    } else{
+        let cancelButton = document.getElementById("cancel-button");
+        cancelButton.addEventListener("click", dialogCancelled);
+    }
 }
 
 function addCategory(){
@@ -52,9 +67,24 @@ function categorySubmitted(event){
 
     let categoryNameInput = document.getElementById("category-name-input").value;
     if(categoryNameInput){
-        currentProject.addCategory(categoryNameInput);
-        generateDOM();
+        if(!currentProject.categories.includes(categoryNameInput)){
+            currentProject.addCategory(categoryNameInput);
+            generateDOM();
+        } else{
+            alert("You already have a category with this name");
+        }
     }
+
+    let dialogBox = event.target.parentElement.parentElement;
+    dialogBox.remove();
+}
+
+function categoryDeleted(event){
+    event.preventDefault();
+
+    let categoryNameInput = document.getElementById("category-name-input").value;
+    currentProject.removeCategory(categoryNameInput);
+    generateDOM();
 
     let dialogBox = event.target.parentElement.parentElement;
     dialogBox.remove();

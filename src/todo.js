@@ -26,6 +26,12 @@ class project {
     }
 
     removeCategory(category){
+        let column = this.getColumnIndex(category);
+        this.todoItems.forEach((todo) => {
+            if(todo.column == column){
+                this.todoItems.splice(this.todoItems.indexOf(todo), 1);
+            }
+        });
         this.categories.splice(this.categories.indexOf(category), 1);
     }
 
@@ -35,5 +41,9 @@ class project {
 
     removeTodoItem(todoItem){
         this.todoItems.splice(this.todoItems.indexOf(todoItem), 1);
+    }
+
+    getColumnIndex(category){
+        return this.categories.indexOf(category)+1;
     }
 }
