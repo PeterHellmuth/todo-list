@@ -12,15 +12,17 @@ let defaultProject = new project("Default project", "This is the default project
 currentProject = defaultProject;
 
 currentProject.addCategory(defaultCat);
-let firstTodo = new todoItem("Something", "this is a thing", "tomorrow", 1, defaultCat);
+let firstTodo = new todoItem("Something", "this is a thing", "tomorrow", 1, 1);
 currentProject.addTodoItem(firstTodo);
-let addCategoryButton = generateCategories(currentProject, categoriesDiv);
-let addTodoButton = generateTodoItems(currentProject, todoItemsDiv);
 
 
-addCategoryButton.addEventListener("click", addCategory);
-addTodoButton.addEventListener("click", addTodo);
+generateDOM();
 
+
+function generateDOM(){
+    generateCategories(currentProject, categoriesDiv).addEventListener("click", addCategory);
+    generateTodoItems(currentProject, todoItemsDiv).forEach((todoButton) => todoButton.addEventListener("click", addTodo));
+}
 
 function addCategory(){
     let submitButton = generateCategoryDialog(bodyElem);
@@ -40,7 +42,6 @@ function addTodo(){
 }
 
 function dialogCancelled(event){
-    console.log(event.target.parentElement.parentElement);
     event.preventDefault();
     let dialogBox = event.target.parentElement.parentElement;
     dialogBox.remove();
@@ -52,8 +53,7 @@ function categorySubmitted(event){
     let categoryNameInput = document.getElementById("category-name-input").value;
     if(categoryNameInput){
         currentProject.addCategory(categoryNameInput);
-        addCategoryButton = generateCategories(currentProject, categoriesDiv, true);
-        addCategoryButton.addEventListener("click", addCategory);
+        generateDOM();
     }
 
     let dialogBox = event.target.parentElement.parentElement;

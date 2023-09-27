@@ -2,12 +2,12 @@ export {todoItem, project}
 
 
 class todoItem {
-    constructor(title, description, dueDate, priority, category){
+    constructor(title, description, dueDate, priority, column){
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority;
-        this.category = category;
+        this.column = column;
     }
 
 
@@ -35,9 +35,5 @@ class project {
 
     removeTodoItem(todoItem){
         this.todoItems.splice(this.todoItems.indexOf(todoItem), 1);
-    }
-
-    getGridColumnIndex(category){
-        return this.categories.indexOf(category)+1;
     }
 }

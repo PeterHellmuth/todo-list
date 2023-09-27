@@ -1,32 +1,39 @@
 export {generateCategories, generateTodoItems, generateCategoryDialog, generateTodoDialog}
 import { project, todoItem } from "./todo"
 
-function generateCategories(project, appendTo, clearFirst = false){
-    if(clearFirst){
-        while (appendTo.hasChildNodes()) {
-            appendTo.removeChild(appendTo.lastChild)
-        }
+function generateCategories(project, appendTo){
+    while (appendTo.hasChildNodes()) {
+        appendTo.removeChild(appendTo.lastChild)
     }
     project.categories.forEach((category) => appendElem(appendTo, "h3", category, "category-header"));
     return appendElem(appendTo, "button", "+","add-category-button");
 }
 
-function generateTodoItems(project, appendTo, clearFirst = false){
-    if(clearFirst){
-        while (appendTo.hasChildNodes()) {
-            appendTo.removeChild(appendTo.lastChild)
-        }
+function generateTodoItems(project, appendTo){
+    while (appendTo.hasChildNodes()) {
+        appendTo.removeChild(appendTo.lastChild)
     }
+
     project.todoItems.forEach((todoItem) => {
         let newItem = appendElem(appendTo, "p", todoItem.title, "todo-item");
-        newItem.style.gridColumn = project.getGridColumnIndex(newItem.category);
+        newItem.style.gridColumn = todoItem.column;
     });
 
-    return appendElem(appendTo, "button", "+","add-todo-button");
+    let buttons = [];
+    let column = 1;
+    project.categories.forEach((category) => {
+        let newButton = appendElem(appendTo, "button", "+","add-todo-button");
+    
+        newButton.style.gridColumn = column;
+        buttons.push(newButton);
+        column++;
+    });
+
+    return buttons;
 }
 
 
-function generateTodoDialog(parentElem, todoItem=null){
+function generateTodoDialog(parentElem, category, todoItem=null){
     if(todoItem){
 
     }
