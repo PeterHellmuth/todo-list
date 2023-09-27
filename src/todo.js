@@ -9,6 +9,8 @@ class todoItem {
         this.priority = priority;
         this.category = category;
     }
+
+
 }
 
 class project {
@@ -33,5 +35,9 @@ class project {
 
     removeTodoItem(todoItem){
         this.todoItems.splice(this.todoItems.indexOf(todoItem), 1);
+    }
+
+    getGridColumnIndex(category){
+        return this.categories.indexOf(category)+1;
     }
 }

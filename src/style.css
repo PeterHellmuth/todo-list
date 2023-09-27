@@ -10,13 +10,19 @@ body{
     padding-left: 20px;
 }
 
-.main-content{
+.header{
+    background-color: grey;
+    color: white;
+}
+
+h1{
+    margin: 0px;
 }
 
 .categories-section{
-    background-color: grey;
     padding-left: 20px;
-    color: white;
+    background-color: white;
+    color: black;
 }
 
 .header>h1{
@@ -25,8 +31,39 @@ body{
 
 #categories{
     display: flex;
+    gap: 20px;
 }
 
 .category-header{
     border: solid 1px;
+    width: 200px;
+    border-radius: 5px;
+
+}
+
+#todo-items{
+    display: grid;
+    grid-auto-columns: 200px;
+    gap: 20px;
+    padding-left: 20px;
+}
+
+.todo-item{
+    width: 200px;
+    border: solid 1px;
+    border-radius: 5px;
+}
+
+.add-todo-button{
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    margin: 0 auto;
+}
+
+.add-category-button{
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    margin: auto 0;
 }
