@@ -48,8 +48,13 @@ function generateCategoryDialog(parentElem, category=null){
     appendElem(dialogForm, "h2", "Category name:");
     let inputField = appendElem(dialogForm, "input", null, null, "category-name-input");
     inputField.value = currentValue;
+    if(category){
+        appendElem(dialogForm, "button", "Delete", "delete-button", "delete-button").type = "button";
+    } else{
+        appendElem(dialogForm, "button", "Cancel", "cancel-button", "cancel-button").type = "button";
+        
+    }
     let submitButton = appendElem(dialogForm, "button", "Submit");
-    submitButton.type="submit";
     parentElem.appendChild(dialogBox);
     dialogBox.showModal();
     return submitButton;

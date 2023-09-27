@@ -2,6 +2,7 @@ import './style.css';
 import { todoItem, project } from './todo';
 import { generateCategories, generateTodoItems, generateTodoDialog, generateCategoryDialog } from './domGenerate';
 
+const bodyElem = document.body
 const categoriesDiv = document.getElementById("categories");
 const todoItemsDiv = document.getElementById("todo-items");
 
@@ -21,17 +22,29 @@ addCategoryButton.addEventListener("click", addCategory);
 addTodoButton.addEventListener("click", addTodo);
 
 
-
-
 function addCategory(){
-    let submitButton = generateCategoryDialog(todoItemsDiv);
+    let submitButton = generateCategoryDialog(bodyElem);
     submitButton.addEventListener("click", categorySubmitted);
+    let deleteButton = document.getElementById("delete-button");
+    if(deleteButton){
+        deleteButton.addEventListener("click", categoryDeleted);
+    } else{
+        let cancelButton = document.getElementById("cancel-button");
+        cancelButton.addEventListener("click", dialogCancelled);
+    }
 }
 
 function addTodo(){
-    generateTodoDialog(todoItemsDiv);
+    let submitButton = generateTodoDialog(bodyElem);
+    submitButton.addEventListener("click", todoSubmitted);
 }
 
+function dialogCancelled(event){
+    console.log(event.target.parentElement.parentElement);
+    event.preventDefault();
+    let dialogBox = event.target.parentElement.parentElement;
+    dialogBox.remove();
+}
 
 function categorySubmitted(event){
     event.preventDefault();
@@ -44,6 +57,14 @@ function categorySubmitted(event){
     }
 
     let dialogBox = event.target.parentElement.parentElement;
-    dialogBox.close();
+    dialogBox.remove();
+}
+
+function todoSubmitted(event){
+    event.preventDefault();
+
+
+    let dialogBox = event.target.parentElement.parentElement;
+    dialogBox.remove();
 }
 
