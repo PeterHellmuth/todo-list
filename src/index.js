@@ -1,26 +1,36 @@
 import './style.css';
 import { todoItem, project } from './todo';
 import { generateCategories, generateTodoItems, generateTodoDialog, generateCategoryDialog, generateProjects, generateProjectDialog } from './domGenerate';
+export { getUniqueID };
+
 
 const bodyElem = document.body;
 const categoriesDiv = document.getElementById("categories");
 const todoItemsDiv = document.getElementById("todo-items");
 const projectsDiv = document.getElementById("projects");
 
+let id = 0; //don't judge me.
+function getUniqueID(){
+    return id++; //shh.
+}
+
+
 let defaultCat = "Things to get done.";
-let defaultProject = new project("Default project", "This is the default project, feel free to add items or make a new project.");
+let defaultProject = new project("Default project");
+defaultProject.addCategory(defaultCat);
+let firstTodo = new todoItem("I need to do this thing", "Go see a man about a dog.", "2023-01-01", 1, 1);
+defaultProject.addTodoItem(firstTodo);
 
 let projects = [];
-projects.push(defaultProject);
-
 let currentProject = null;
-currentProject = defaultProject;
+readLocalStorage();
+setCurrentProject(projects[0]);
 
-currentProject.addCategory(defaultCat);
-let firstTodo = new todoItem("I need to do this thing", "Go see a man about a dog.", "2023-01-01", 1, 1);
-currentProject.addTodoItem(firstTodo);
+
+
 
 generateDOM();
+
 
 function generateDOM(){
     if(currentProject){
@@ -37,11 +47,60 @@ function generateDOM(){
         }
     }
     generateProjects(projectsDiv, projects).addEventListener("click", addProject);
-    let projectTitles = document.querySelectorAll(".project-name");
+    let projectTitles = document.querySelectorAll(".project-container");
     projectTitles.forEach((projectTitle) => projectTitle.addEventListener("click", projectTitleClicked));
     let projectEditButtons = document.querySelectorAll(".project-edit");
     projectEditButtons.forEach((projectEditButton) => projectEditButton.addEventListener("click", projectEditClicked));
+    updateLocalStorage();
 }
+
+
+function updateLocalStorage(){
+    projects.forEach((item) => {
+        let writeObj = {
+            title: item.title,
+            categories: JSON.stringify(item.categories),
+            todoItems: JSON.stringify(item.todoItems)
+        }
+        localStorage.setItem("todo-project-"+item.title, JSON.stringify(writeObj));
+    });
+    localStorage.setItem("todo-id", id);
+}
+
+function readLocalStorage(){
+    let noStoredProjects = true;
+
+    if(localStorage.length > 0){
+        for (let i = localStorage.length-1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            const value = localStorage.getItem(key);
+
+            if(key.slice(0,5) == "todo-"){
+                if(key.slice(0,7) == "todo-id"){
+                    id = Number(value);
+                } else{
+                    noStoredProjects = false;
+                    
+                    let readObj = JSON.parse(value);
+                    let readTodoItems = [];
+                    JSON.parse(readObj.todoItems).forEach((item) => {
+                        readTodoItems.push(new todoItem(item.title, item.description, item.dueDate, item.priority, item.column));
+                    });
+                    
+                    projects.push(new project(readObj.title, JSON.parse(readObj.categories), readTodoItems));
+                    currentProject = projects[projects.length-1];
+                }
+            } 
+        }    
+    }
+
+    if(noStoredProjects){
+        console.log("no stored projects");
+        projects.push(defaultProject);
+    }
+}
+
+
 
 
 function todoClicked(event){
@@ -61,7 +120,7 @@ function projectTitleClicked(event){
     let projectName = event.target.innerText;
     projects.forEach((projectInstance) =>{
         if(projectInstance.title == projectName){
-            currentProject = projectInstance;
+            setCurrentProject(projectInstance);
             generateDOM();
         }
     });
@@ -156,6 +215,7 @@ function projectSubmitted(event){
     event.preventDefault();
 
     let projectNameInput = document.getElementById("project-name-input").value;
+    
     if(projectNameInput){
         let projectExists = false;
         projects.forEach((projectInstance) =>{
@@ -164,15 +224,27 @@ function projectSubmitted(event){
                 alert("You already have a project with this name");
             }
         });
-
+       
         if(!projectExists){
             projects.push(new project(`${projectNameInput}`));
+            setCurrentProject(projects[projects.length-1]);
             generateDOM();
         }
     }
 
     let dialogBox = event.target.parentElement.parentElement;
     dialogBox.remove();
+}
+
+
+function setCurrentProject(project){
+    if(currentProject){
+        currentProject.currentProject = false;
+    }
+    currentProject = project;
+    if(currentProject){
+        currentProject.currentProject = true;
+    }
 }
 
 function categoryDeleted(event){
@@ -193,11 +265,12 @@ function projectDeleted(event){
 
     projects.forEach((projectInstance) => {
         if(projectInstance.title == projectNameInput){
+            localStorage.removeItem("todo-project-"+projectInstance.title);
             projects.splice(projects.indexOf(projectInstance), 1);
             if(projects.length == 0){
-                currentProject = null;
+                setCurrentProject(null);
             } else{
-                currentProject = projects[0];
+                setCurrentProject(projects[0]);
             }
             generateDOM();
         }

@@ -1,9 +1,7 @@
+import { getUniqueID } from ".";
 export {todoItem, project}
 
-let id = 0; //don't judge me.
-function getUniqueID(){
-    return id++; //shh.
-}
+
 
 
 class todoItem {
@@ -19,11 +17,11 @@ class todoItem {
 }
 
 class project {
-    constructor(title, description){
+    constructor(title, categories = [], todoItems = []){
         this.title = title;
-        this.description = description;
-        this.categories = [];
-        this.todoItems = [];
+        this.categories = categories;
+        this.todoItems = todoItems;
+        this.currentProject = false;
     }
 
     addCategory(category){
@@ -65,4 +63,5 @@ class project {
         });
         return returnItem;
     }
+
 }

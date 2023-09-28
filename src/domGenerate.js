@@ -1,5 +1,8 @@
 export {generateCategories, generateTodoItems, generateCategoryDialog, generateTodoDialog, generateProjects, generateProjectDialog}
-import { project, todoItem } from "./todo"
+
+const MAX_PROJECT_NAME_LENGTH = 15;
+const MAX_CATEGORY_NAME_LENGTH = 15;
+const TODO_TEXTBOX_DEFAULT_ROWS = 10;
 
 function generateCategories(project, appendTo){
     while (appendTo.hasChildNodes()) {
@@ -53,6 +56,9 @@ function generateProjects(appendTo, projects){
     if(projects){
         projects.forEach((projectInstance) => {
             let projectDiv = appendElem(appendTo, "div", null, "project-container");
+            if(projectInstance.currentProject){
+                projectDiv.classList.add("current-project");
+            }
             appendElem(projectDiv, "h3", projectInstance.title, "project-name");
             appendElem(projectDiv, "button", "edit", "project-edit").id = projectInstance.title;
         });
@@ -81,7 +87,7 @@ function generateTodoDialog(parentElem, category, column, todoItem=null){
 
     appendElem(dialogForm, "h2", "Description:");
     let inputFieldDescription = appendElem(dialogForm, "textarea", null, null, "todo-description-input");
-    inputFieldDescription.rows = 10;
+    inputFieldDescription.rows = TODO_TEXTBOX_DEFAULT_ROWS;
     inputFieldDescription.value = description;
 
     appendElem(dialogForm, "h2", "Date");
@@ -126,6 +132,7 @@ function generateCategoryDialog(parentElem, category=null){
     let dialogForm = appendElem(dialogBox, "form", null, "category-form");
     appendElem(dialogForm, "h2", "Category name:");
     let inputField = appendElem(dialogForm, "input", null, null, "category-name-input");
+    inputField.maxLength = MAX_CATEGORY_NAME_LENGTH;
     inputField.value = currentValue;
     if(category){
         appendElem(dialogForm, "button", "Delete", "delete-button", "delete-button").type = "button";
@@ -150,6 +157,7 @@ function generateProjectDialog(parentElem, title=null){
     let dialogForm = appendElem(dialogBox, "form", null, "project-form");
     appendElem(dialogForm, "h2", "Project name:");
     let inputField = appendElem(dialogForm, "input", null, null, "project-name-input");
+    inputField.maxLength = MAX_PROJECT_NAME_LENGTH;
     inputField.value = currentValue;
     if(title){
         appendElem(dialogForm, "button", "Delete", "delete-button", "delete-button").type = "button";

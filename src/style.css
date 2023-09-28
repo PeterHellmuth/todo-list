@@ -1,13 +1,14 @@
 body{
     margin: 0px;
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 225px 1fr;
     height: 100vh;
 }
 
 .sidebar{
     background-color: lightblue;
     padding-left: 20px;
+    padding-right: 20px;
 }
 
 .header{
@@ -76,7 +77,14 @@ h1{
 }
 
 .project-container {
+    border-radius: 20px;
     display: flex;
+    gap: 10px;
+    padding: 6px;
+}
+
+.project-container:hover{
+    background-color: lightgrey;
 }
 
 .project-edit{
@@ -85,3 +93,10 @@ h1{
     height: 30px;
     margin: auto 0;
 }
+
+.current-project{
+    color: black;
+    background-color: white;
+
+}
+
