@@ -1,10 +1,11 @@
-export {generateCategories, generateTodoItems, generateCategoryDialog, generateTodoDialog}
+export {generateCategories, generateTodoItems, generateCategoryDialog, generateTodoDialog, generateProjects, generateProjectDialog}
 import { project, todoItem } from "./todo"
 
 function generateCategories(project, appendTo){
     while (appendTo.hasChildNodes()) {
         appendTo.removeChild(appendTo.lastChild)
     }
+
     project.categories.forEach((category) => appendElem(appendTo, "h3", category, "category-header"));
     return appendElem(appendTo, "button", "+","add-category-button");
 }
@@ -13,8 +14,6 @@ function generateTodoItems(project, appendTo, todoClicked){
     while (appendTo.hasChildNodes()) {
         appendTo.removeChild(appendTo.lastChild)
     }
-
-
 
     let buttons = [];
     let column = 1;
@@ -43,8 +42,23 @@ function generateTodoItems(project, appendTo, todoClicked){
     });
 
     return buttons;
+
 }
 
+function generateProjects(appendTo, projects){
+    while (appendTo.hasChildNodes()) {
+        appendTo.removeChild(appendTo.lastChild)
+    }
+
+    if(projects){
+        projects.forEach((projectInstance) => {
+            let projectDiv = appendElem(appendTo, "div", null, "project-container");
+            appendElem(projectDiv, "h3", projectInstance.title, "project-name");
+            appendElem(projectDiv, "button", "edit", "project-edit").id = projectInstance.title;
+        });
+    }
+    return appendElem(appendTo, "button", "+","add-project-button");
+}
 
 function generateTodoDialog(parentElem, category, column, todoItem=null){
     let title = "";
@@ -114,6 +128,30 @@ function generateCategoryDialog(parentElem, category=null){
     let inputField = appendElem(dialogForm, "input", null, null, "category-name-input");
     inputField.value = currentValue;
     if(category){
+        appendElem(dialogForm, "button", "Delete", "delete-button", "delete-button").type = "button";
+    } else{
+        appendElem(dialogForm, "button", "Cancel", "cancel-button", "cancel-button").type = "button";  
+    }
+    let submitButton = appendElem(dialogForm, "button", "Submit");
+    parentElem.appendChild(dialogBox);
+    dialogBox.showModal();
+    return submitButton;
+}
+
+
+function generateProjectDialog(parentElem, title=null){
+    let currentValue = "";
+    if(title){
+        currentValue = title
+    }
+
+    const dialogBox = document.createElement("dialog");
+    dialogBox.classList.add("dialog-box");
+    let dialogForm = appendElem(dialogBox, "form", null, "project-form");
+    appendElem(dialogForm, "h2", "Project name:");
+    let inputField = appendElem(dialogForm, "input", null, null, "project-name-input");
+    inputField.value = currentValue;
+    if(title){
         appendElem(dialogForm, "button", "Delete", "delete-button", "delete-button").type = "button";
     } else{
         appendElem(dialogForm, "button", "Cancel", "cancel-button", "cancel-button").type = "button";  

@@ -34,6 +34,12 @@ h1{
     gap: 20px;
 }
 
+#projects{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .category-header{
     border: solid 1px;
     width: 200px;
@@ -62,9 +68,20 @@ h1{
     margin: 0 auto;
 }
 
-.add-category-button{
+.add-category-button, .add-project-button {
     background-color: white;
     width: 30px;
+    height: 30px;
+    margin: auto 0;
+}
+
+.project-container {
+    display: flex;
+}
+
+.project-edit{
+    background-color: white;
+    width: 40px;
     height: 30px;
     margin: auto 0;
 }

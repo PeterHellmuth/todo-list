@@ -1,27 +1,46 @@
 import './style.css';
 import { todoItem, project } from './todo';
-import { generateCategories, generateTodoItems, generateTodoDialog, generateCategoryDialog } from './domGenerate';
+import { generateCategories, generateTodoItems, generateTodoDialog, generateCategoryDialog, generateProjects, generateProjectDialog } from './domGenerate';
 
 const bodyElem = document.body;
 const categoriesDiv = document.getElementById("categories");
 const todoItemsDiv = document.getElementById("todo-items");
+const projectsDiv = document.getElementById("projects");
 
-let currentProject = null;
 let defaultCat = "Things to get done.";
 let defaultProject = new project("Default project", "This is the default project, feel free to add items or make a new project.");
+
+let projects = [];
+projects.push(defaultProject);
+
+let currentProject = null;
 currentProject = defaultProject;
 
 currentProject.addCategory(defaultCat);
-let firstTodo = new todoItem("Something", "this is a thing", "tomorrow", 1, 1);
+let firstTodo = new todoItem("I need to do this thing", "Go see a man about a dog.", "2023-01-01", 1, 1);
 currentProject.addTodoItem(firstTodo);
 
 generateDOM();
 
 function generateDOM(){
-    generateCategories(currentProject, categoriesDiv).addEventListener("click", addCategory);
-    generateTodoItems(currentProject, todoItemsDiv, todoClicked).forEach((todoButton) => todoButton.addEventListener("click", addTodo));
-    let categoryHeaders = document.querySelectorAll(".category-header");
-    categoryHeaders.forEach((header) => header.addEventListener("click", categoryClicked));
+    if(currentProject){
+        generateCategories(currentProject, categoriesDiv).addEventListener("click", addCategory);
+        generateTodoItems(currentProject, todoItemsDiv, todoClicked).forEach((todoButton) => todoButton.addEventListener("click", addTodo));
+        let categoryHeaders = document.querySelectorAll(".category-header");
+        categoryHeaders.forEach((header) => header.addEventListener("click", categoryClicked));
+    } else{
+        while (categoriesDiv.hasChildNodes()) {
+            categoriesDiv.removeChild(categoriesDiv.lastChild)
+        }
+        while (todoItemsDiv.hasChildNodes()) {
+            todoItemsDiv.removeChild(todoItemsDiv.lastChild)
+        }
+    }
+    generateProjects(projectsDiv, projects).addEventListener("click", addProject);
+    let projectTitles = document.querySelectorAll(".project-name");
+    projectTitles.forEach((projectTitle) => projectTitle.addEventListener("click", projectTitleClicked));
+    let projectEditButtons = document.querySelectorAll(".project-edit");
+    projectEditButtons.forEach((projectEditButton) => projectEditButton.addEventListener("click", projectEditClicked));
 }
 
 
@@ -37,6 +56,30 @@ function todoClicked(event){
         cancelButton.addEventListener("click", dialogCancelled);
     }
 }
+
+function projectTitleClicked(event){
+    let projectName = event.target.innerText;
+    projects.forEach((projectInstance) =>{
+        if(projectInstance.title == projectName){
+            currentProject = projectInstance;
+            generateDOM();
+        }
+    });
+}
+
+function projectEditClicked(event){
+    let submitButton = generateProjectDialog(bodyElem, event.target.id);
+
+    submitButton.addEventListener("click", projectSubmitted);
+    let deleteButton = document.getElementById("delete-button");
+    if(deleteButton){
+        deleteButton.addEventListener("click", projectDeleted);
+    } else{
+        let cancelButton = document.getElementById("cancel-button");
+        cancelButton.addEventListener("click", dialogCancelled);
+    }
+}
+
 
 function categoryClicked(event){
     let submitButton = generateCategoryDialog(bodyElem, event.target.innerText);
@@ -60,6 +103,18 @@ function addCategory(){
         let cancelButton = document.getElementById("cancel-button");
         cancelButton.addEventListener("click", dialogCancelled);
     }
+}
+
+function addProject(){
+    let submitButton = generateProjectDialog(bodyElem);
+    submitButton.addEventListener("click", projectSubmitted);
+    let deleteButton = document.getElementById("delete-button");
+    if(deleteButton){
+        deleteButton.addEventListener("click", projectDeleted);
+    } else{
+        let cancelButton = document.getElementById("cancel-button");
+        cancelButton.addEventListener("click", dialogCancelled);
+    } 
 }
 
 function addTodo(event){
@@ -97,6 +152,29 @@ function categorySubmitted(event){
     dialogBox.remove();
 }
 
+function projectSubmitted(event){
+    event.preventDefault();
+
+    let projectNameInput = document.getElementById("project-name-input").value;
+    if(projectNameInput){
+        let projectExists = false;
+        projects.forEach((projectInstance) =>{
+            if(projectInstance.title == projectNameInput){
+                projectExists = true;
+                alert("You already have a project with this name");
+            }
+        });
+
+        if(!projectExists){
+            projects.push(new project(`${projectNameInput}`));
+            generateDOM();
+        }
+    }
+
+    let dialogBox = event.target.parentElement.parentElement;
+    dialogBox.remove();
+}
+
 function categoryDeleted(event){
     event.preventDefault();
 
@@ -107,6 +185,27 @@ function categoryDeleted(event){
     let dialogBox = event.target.parentElement.parentElement;
     dialogBox.remove();
 }
+
+function projectDeleted(event){
+    event.preventDefault();
+
+    let projectNameInput = document.getElementById("project-name-input").value;
+
+    projects.forEach((projectInstance) => {
+        if(projectInstance.title == projectNameInput){
+            projects.splice(projects.indexOf(projectInstance), 1);
+            if(projects.length == 0){
+                currentProject = null;
+            } else{
+                currentProject = projects[0];
+            }
+            generateDOM();
+        }
+    });
+    let dialogBox = event.target.parentElement.parentElement;
+    dialogBox.remove();
+}
+
 
 function todoDeleted(event){
     event.preventDefault();
