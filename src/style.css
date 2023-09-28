@@ -52,6 +52,7 @@ h1{
     width: 200px;
     border: solid 1px;
     border-radius: 5px;
+    min-height: 1em;
 }
 
 .add-todo-button{

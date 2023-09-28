@@ -1,5 +1,10 @@
 export {todoItem, project}
 
+let id = 0; //don't judge me.
+function getUniqueID(){
+    return id++; //shh.
+}
+
 
 class todoItem {
     constructor(title, description, dueDate, priority, column){
@@ -8,8 +13,8 @@ class todoItem {
         this.dueDate = dueDate;
         this.priority = priority;
         this.column = column;
+        this.id = getUniqueID();
     }
-
 
 }
 
@@ -26,13 +31,15 @@ class project {
     }
 
     removeCategory(category){
-        let column = this.getColumnIndex(category);
-        this.todoItems.forEach((todo) => {
-            if(todo.column == column){
-                this.todoItems.splice(this.todoItems.indexOf(todo), 1);
-            }
-        });
-        this.categories.splice(this.categories.indexOf(category), 1);
+        if(category){
+            let column = this.getColumnIndex(category);
+            this.todoItems.forEach((todo) => {
+                if(todo.column == column){
+                    this.todoItems.splice(this.todoItems.indexOf(todo), 1);
+                }
+            });
+            this.categories.splice(this.categories.indexOf(category), 1);
+        }
     }
 
     addTodoItem(todoItem){
@@ -40,10 +47,22 @@ class project {
     }
 
     removeTodoItem(todoItem){
-        this.todoItems.splice(this.todoItems.indexOf(todoItem), 1);
+        if(todoItem){
+            this.todoItems.splice(this.todoItems.indexOf(todoItem), 1);
+        }
     }
 
     getColumnIndex(category){
         return this.categories.indexOf(category)+1;
+    }
+
+    getTodoItem(id){
+        let returnItem = null;
+        this.todoItems.forEach((item) => {
+            if(item.id == id){
+                returnItem = item;
+            }
+        });
+        return returnItem;
     }
 }

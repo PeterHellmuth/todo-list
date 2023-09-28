@@ -2,7 +2,7 @@ import './style.css';
 import { todoItem, project } from './todo';
 import { generateCategories, generateTodoItems, generateTodoDialog, generateCategoryDialog } from './domGenerate';
 
-const bodyElem = document.body
+const bodyElem = document.body;
 const categoriesDiv = document.getElementById("categories");
 const todoItemsDiv = document.getElementById("todo-items");
 
@@ -15,19 +15,30 @@ currentProject.addCategory(defaultCat);
 let firstTodo = new todoItem("Something", "this is a thing", "tomorrow", 1, 1);
 currentProject.addTodoItem(firstTodo);
 
-
 generateDOM();
-
 
 function generateDOM(){
     generateCategories(currentProject, categoriesDiv).addEventListener("click", addCategory);
-    generateTodoItems(currentProject, todoItemsDiv).forEach((todoButton) => todoButton.addEventListener("click", addTodo));
+    generateTodoItems(currentProject, todoItemsDiv, todoClicked).forEach((todoButton) => todoButton.addEventListener("click", addTodo));
     let categoryHeaders = document.querySelectorAll(".category-header");
     categoryHeaders.forEach((header) => header.addEventListener("click", categoryClicked));
 }
 
+
+function todoClicked(event){
+    let todo = currentProject.getTodoItem(event.target.id);
+    let submitButton = generateTodoDialog(bodyElem, currentProject.categories[todo.column-1], todo.column, todo);
+    submitButton.addEventListener("click", todoSubmitted);
+    let deleteButton = document.getElementById("delete-button");
+    if(deleteButton){
+        deleteButton.addEventListener("click", todoDeleted);
+    } else{
+        let cancelButton = document.getElementById("cancel-button");
+        cancelButton.addEventListener("click", dialogCancelled);
+    }
+}
+
 function categoryClicked(event){
-    
     let submitButton = generateCategoryDialog(bodyElem, event.target.innerText);
     submitButton.addEventListener("click", categorySubmitted);
     let deleteButton = document.getElementById("delete-button");
@@ -51,9 +62,16 @@ function addCategory(){
     }
 }
 
-function addTodo(){
-    let submitButton = generateTodoDialog(bodyElem);
+function addTodo(event){
+    let submitButton = generateTodoDialog(bodyElem, currentProject.categories[event.target.data-1], event.target.data); 
     submitButton.addEventListener("click", todoSubmitted);
+    let deleteButton = document.getElementById("delete-button");
+    if(deleteButton){
+        deleteButton.addEventListener("click", todoDeleted);
+    } else{
+        let cancelButton = document.getElementById("cancel-button");
+        cancelButton.addEventListener("click", dialogCancelled);
+    }
 }
 
 function dialogCancelled(event){
@@ -90,9 +108,36 @@ function categoryDeleted(event){
     dialogBox.remove();
 }
 
+function todoDeleted(event){
+    event.preventDefault();
+
+    let todo = currentProject.getTodoItem(event.target.data);
+    currentProject.removeTodoItem(todo);
+    generateDOM();
+
+    let dialogBox = event.target.parentElement.parentElement;
+    dialogBox.remove();
+}
+
 function todoSubmitted(event){
     event.preventDefault();
 
+    if(event.target.id == "new"){
+        let inputFieldTitle = document.getElementById("todo-title-input").value;
+        let inputFieldDescription = document.getElementById("todo-description-input").value;
+        let inputFieldDate = document.getElementById("todo-dueDate-input").value;
+        let inputFieldPriority= document.getElementById("todo-priority-input").value;
+    
+        let newTodo = new todoItem(inputFieldTitle, inputFieldDescription, inputFieldDate ,inputFieldPriority, event.target.data);
+        currentProject.addTodoItem(newTodo);
+    } else{
+        let currentTodo = currentProject.getTodoItem(event.target.id);
+        currentTodo.title = document.getElementById("todo-title-input").value;
+        currentTodo.description = document.getElementById("todo-description-input").value;
+        currentTodo.dueDate  = document.getElementById("todo-dueDate-input").value;
+        currentTodo.priority = document.getElementById("todo-priority-input").value;
+    }
+    generateDOM();
 
     let dialogBox = event.target.parentElement.parentElement;
     dialogBox.remove();
