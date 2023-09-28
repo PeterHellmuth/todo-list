@@ -129,7 +129,8 @@ function projectTitleClicked(event){
 function projectEditClicked(event){
     let submitButton = generateProjectDialog(bodyElem, event.target.id);
 
-    submitButton.addEventListener("click", projectSubmitted);
+    submitButton.addEventListener("click", projectEdited);
+    submitButton.id = event.target.id;
     let deleteButton = document.getElementById("delete-button");
     if(deleteButton){
         deleteButton.addEventListener("click", projectDeleted);
@@ -141,8 +142,11 @@ function projectEditClicked(event){
 
 
 function categoryClicked(event){
+    let column = currentProject.getColumnIndex(event.target.innerText);
     let submitButton = generateCategoryDialog(bodyElem, event.target.innerText);
-    submitButton.addEventListener("click", categorySubmitted);
+    submitButton.addEventListener("click", categoryEdited);
+    submitButton.id = column;
+
     let deleteButton = document.getElementById("delete-button");
     if(deleteButton){
         deleteButton.addEventListener("click", categoryDeleted);
@@ -211,6 +215,19 @@ function categorySubmitted(event){
     dialogBox.remove();
 }
 
+function categoryEdited(event){
+    event.preventDefault();
+
+    let categoryNameInput = document.getElementById("category-name-input").value;
+    if(categoryNameInput){
+        currentProject.setCategory(categoryNameInput, event.target.id);
+        generateDOM();
+    }
+    
+    let dialogBox = event.target.parentElement.parentElement;
+    dialogBox.remove();
+}
+
 function projectSubmitted(event){
     event.preventDefault();
 
@@ -231,6 +248,24 @@ function projectSubmitted(event){
             generateDOM();
         }
     }
+
+    let dialogBox = event.target.parentElement.parentElement;
+    dialogBox.remove();
+}
+
+function projectEdited(event){
+    event.preventDefault();
+    let projectNameInput = document.getElementById("project-name-input").value;
+
+    let currentProjectTitle = event.target.id;
+    projects.forEach((item) =>{
+        if(item.title == currentProjectTitle){
+            localStorage.removeItem("todo-project-"+item.title); //delete old key storage or it will remain.
+            item.title = projectNameInput;
+            generateDOM();
+        }
+    });
+
 
     let dialogBox = event.target.parentElement.parentElement;
     dialogBox.remove();

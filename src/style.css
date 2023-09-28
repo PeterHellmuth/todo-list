@@ -20,6 +20,7 @@ h1{
     margin: 0px;
 }
 
+
 .categories-section{
     padding-left: 20px;
     background-color: white;
@@ -77,13 +78,16 @@ h1{
 }
 
 .project-container {
-    border-radius: 20px;
     display: flex;
     gap: 10px;
+}
+
+.project-name{
+    border-radius: 20px;
     padding: 6px;
 }
 
-.project-container:hover{
+.project-name:hover{
     background-color: lightgrey;
 }
 
@@ -97,6 +101,5 @@ h1{
 .current-project{
     color: black;
     background-color: white;
-
 }
 

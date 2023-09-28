@@ -56,10 +56,10 @@ function generateProjects(appendTo, projects){
     if(projects){
         projects.forEach((projectInstance) => {
             let projectDiv = appendElem(appendTo, "div", null, "project-container");
+            let projectTitle = appendElem(projectDiv, "h3", projectInstance.title, "project-name");
             if(projectInstance.currentProject){
-                projectDiv.classList.add("current-project");
+                projectTitle.classList.add("current-project");
             }
-            appendElem(projectDiv, "h3", projectInstance.title, "project-name");
             appendElem(projectDiv, "button", "edit", "project-edit").id = projectInstance.title;
         });
     }

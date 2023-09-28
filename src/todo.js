@@ -40,6 +40,10 @@ class project {
         }
     }
 
+    setCategory(value, column){
+        this.categories[column-1] = value;
+    }
+
     addTodoItem(todoItem){
         this.todoItems.push(todoItem) ;
     }
